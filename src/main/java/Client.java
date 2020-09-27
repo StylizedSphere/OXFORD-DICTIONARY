@@ -27,6 +27,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import javax.swing.ImageIcon;
 
 public class Client extends UI {
     private JPanel panel;
@@ -73,14 +74,14 @@ public class Client extends UI {
         textPane.setEditable(false);
         textPane.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         scrollPane = new JScrollPane(textPane);
-        scrollPane.setPreferredSize(new Dimension(super.getWidth(), super.getHeight()*4/5));
+        scrollPane.setPreferredSize(new Dimension(super.getWidth(), super.getHeight() * 4 / 5));
 
         // having to fix image loading in jpanel
-        JPanel bottom = new ImagePanel( "unityasset.jpg");
+        JPanel bottom = new JPanel();
         JButton search = new JButton("SEARCH");
         JButton add = new JButton("ADD NEW ENTRY");
         JButton delete = new JButton("DELETE");
-        JButton playSound = new JButton("PLAYSOUND");
+        JButton playSound = new JButton(null, new ImageIcon("src\\main\\resources\\image\\volume.png"));
 
         bottom.setAlignmentX(RIGHT_ALIGNMENT);
         bottom.setLayout(new BoxLayout(bottom, BoxLayout.X_AXIS));
@@ -100,7 +101,6 @@ public class Client extends UI {
         bottom.add(search);
         bottom.add(add);
         bottom.add(delete);
-        bottom.add(Box.createRigidArea(new Dimension(5, 0)));
         bottom.add(playSound);
         bottom.add(Box.createRigidArea(new Dimension(15, 0)));
 
