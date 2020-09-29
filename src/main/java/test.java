@@ -1,51 +1,20 @@
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
 
 public class test {
-
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
+        File file = new File("E:\\PERSONAL\\JAVA OOP\\src\\main\\resources\\database\\database.txt");
         try {
-            //define a HTML String Builder
-            StringBuilder htmlStringBuilder=new StringBuilder();
-            //append html header and title
-            htmlStringBuilder.append("<html><head><title>Selenium Test </title></head>");
-            //append body
-            htmlStringBuilder.append("<body>");
-            //append table
-            htmlStringBuilder.append("<table border=\"1\" bordercolor=\"#000000\">");
-            //append row
-            htmlStringBuilder.append("<tr><td><b>TestId</b></td><td><b>TestName</b></td><td><b>TestResult</b></td></tr>");
-            //append row
-            htmlStringBuilder.append("<tr><td>001</td><td>Login</td><td>Passed</td></tr>");
-            //append row
-            htmlStringBuilder.append("<tr><td>002</td><td>Logout</td><td>Passed</td></tr>");
-            //close html file
-            htmlStringBuilder.append("</table></body></html>");
-            //write html string content to a file
-            WriteToFile(htmlStringBuilder.toString(),"testfile.html");
-        } catch (IOException e) {
-            e.printStackTrace();
+            FileWriter w = new FileWriter(file);
+            w.write("\nbob");
+            w.close();
+        }catch(Exception exception) {
+            System.err.println("Cannot open database.txt");
         }
-    }
-    public static void WriteToFile(String fileContent, String fileName) throws IOException {
-        String projectPath = System.getProperty("user.dir");
-        String tempFile = projectPath + File.separator+fileName;
-        File file = new File(tempFile);
-        // if file does exists, then delete and create a new file
-        if (file.exists()) {
-            try {
-                File newFileName = new File(projectPath + File.separator+ "backup_"+fileName);
-                file.renameTo(newFileName);
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        //write to file with OutputStreamWriter
-        OutputStream outputStream = new FileOutputStream(file.getAbsoluteFile());
-        Writer writer=new OutputStreamWriter(outputStream);
-        writer.write(fileContent);
-        writer.close();
-
     }
 }
+// apple
+// a
+
+
+// ap

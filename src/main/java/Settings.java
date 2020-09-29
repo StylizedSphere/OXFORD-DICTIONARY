@@ -11,10 +11,14 @@ import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 public class Settings extends UI {
     private JPanel panel;
@@ -54,6 +58,8 @@ public class Settings extends UI {
         JButton submit = new JButton("SUBMIT");
         JButton back = new JButton("BACK");
         back.addActionListener(new backToMainPage());
+        submit.setMnemonic(KeyEvent.VK_ENTER);
+        back.setMnemonic(KeyEvent.VK_BACK_SPACE);
         submit.addActionListener(new createNewWord());
         bot.add(Box.createVerticalGlue());
         bot.add(botScrollPane);
@@ -72,7 +78,7 @@ public class Settings extends UI {
             String wordTarget = topTextPane.getText();
 
             try {
-                File obj = new File( cd + "/database/" + wordTarget + ".html");
+                File obj = new File( cd + "/database/file/" + wordTarget + ".html");
                 if (obj.createNewFile()) {
                     System.out.println("File created: " + obj.getName());
                 } else {
@@ -84,10 +90,12 @@ public class Settings extends UI {
             }
 
             try {
-                FileWriter myWriter = new FileWriter( cd + "/database/" + wordTarget + ".html");
+                FileWriter myWriter = new FileWriter( cd + "/database/file/" + wordTarget + ".html");
+                myWriter.write(topTextPane.getText() + "\n");
                 myWriter.write(botTextPane.getText());
                 myWriter.close();
                 System.out.println("Successfully wrote to the file.");
+                Files.write(Paths.get("E:\\PERSONAL\\JAVA OOP\\src\\main\\resources\\database\\database.txt"), ("\n" + wordTarget).getBytes(), StandardOpenOption.APPEND);
             } catch (IOException e) {
                 System.out.println("An error occurred.");
                 e.printStackTrace();
@@ -109,9 +117,7 @@ public class Settings extends UI {
     }
 
     public static void main(String[] args) {
-
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 Settings ex = new Settings();
                 ex.setVisible(true);

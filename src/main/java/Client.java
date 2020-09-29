@@ -1,23 +1,14 @@
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,97 +18,29 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import javax.swing.ImageIcon;
+import java.util.Iterator;
 
 public class Client extends UI {
     private JPanel panel;
     private JTextPane textPane;
     private JTextField textField;
     private JScrollPane scrollPane;
+    private javax.swing.JScrollPane jListScrollPane;
+    private javax.swing.JList<String> jList;
 
     private String currentWord;
     private boolean isTranslated;
 
+    DefaultListModel jListModel = new DefaultListModel();
+
     public Client() {
         super();
+        jListBindData();
         isTranslated = true;
     }
 
-    private void initJFrame() {
-        Settings frame = new Settings();
-        frame.setVisible(true);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-    }
-
     public final void initUI() {
-        setSize(800,600);
-
-        JPanel basic = new JPanel();
-        basic.setLayout(new BoxLayout(basic, BoxLayout.Y_AXIS));
-        JMenuBar menubar = new JMenuBar();
-        JMenu viewMenu = new JMenu("TRANSLATE");
-        JCheckBoxMenuItem showStatusBar = new JCheckBoxMenuItem("Translate then search");
-        showStatusBar.setDisplayedMnemonicIndex(5);
-        showStatusBar.setSelected(false);
-        showStatusBar.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                isTranslated = false;
-            }
-        });
-        viewMenu.add(showStatusBar);
-        menubar.add(viewMenu);
-        setJMenuBar(menubar);
-        textPane = new JTextPane();
-        textPane.setContentType("text/html");
-        textPane.setEditable(false);
-        textPane.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-        scrollPane = new JScrollPane(textPane);
-        scrollPane.setPreferredSize(new Dimension(super.getWidth(), super.getHeight() * 4 / 5));
-
-        // having to fix image loading in jpanel
-        JPanel bottom = new JPanel();
-        JButton search = new JButton("SEARCH");
-        JButton add = new JButton("ADD NEW ENTRY");
-        JButton delete = new JButton("DELETE");
-        JButton playSound = new JButton(null, new ImageIcon("src\\main\\resources\\image\\volume.png"));
-
-        bottom.setAlignmentX(RIGHT_ALIGNMENT);
-        bottom.setLayout(new BoxLayout(bottom, BoxLayout.X_AXIS));
-        textField = new JTextField();
-        delete.addActionListener(new DictionaryDeleteEntry());
-        search.setMnemonic(KeyEvent.VK_ENTER);
-        search.addActionListener(new DictionarySearch());
-        add.addActionListener(new DictionaryAdd());
-        playSound.addActionListener(new DisplaySound());
-        basic.add(scrollPane);
-        basic.add(Box.createVerticalGlue());
-        add(basic);
-
-        bottom.add(Box.createRigidArea(new Dimension(10, 10)));
-        bottom.add(textField);
-        bottom.add(Box.createRigidArea(new Dimension(15, 0)));
-        bottom.add(search);
-        bottom.add(add);
-        bottom.add(delete);
-        bottom.add(playSound);
-        bottom.add(Box.createRigidArea(new Dimension(15, 0)));
-
-        basic.add(bottom);
-        basic.add(Box.createRigidArea(new Dimension(0, 15)));
-        setTitle("OXFORD");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-
     }
-
-    private class DisplaySound extends AbstractAction {
-        public void actionPerformed(ActionEvent event) {
-            if (currentWord != null) SoundClip.playSound(currentWord + ".wav");
-        }
-    }
-
 
     private class DictionarySearch extends AbstractAction {
         public void actionPerformed(ActionEvent event) {
@@ -128,7 +51,6 @@ public class Client extends UI {
                     wordTarget = translate("vi", "en", wordTarget);
                     loadFile(wordTarget.toLowerCase());
                     currentWord = wordTarget;
-                    System.out.println(wordTarget);
                 }catch(Exception e) {
                     System.err.println("Cannot use Google Translate API");
                 }
@@ -140,7 +62,7 @@ public class Client extends UI {
 
     private class DictionaryAdd extends AbstractAction {
         public void actionPerformed(ActionEvent event) {
-            initJFrame();
+            goToSettings();
         }
     }
 
@@ -156,21 +78,74 @@ public class Client extends UI {
         }
     }
 
-    private void loadFile(String src) {
-        try {
-            textPane.setPage("File:///" + cd + "/database/" + src + ".html");
-        } catch (Exception ex) {
-            showError("Data not found!");
+    private void jListBindData(){
+        Iterator i = oxford.database.iterator();
+        while (i.hasNext())
+            jListModel.addElement(i.next().toString());
+
+        jList.setModel(jListModel);
+        jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    }
+
+    private void searchKeyReleased(java.awt.event.KeyEvent evt) {
+        searchFilter(textField.getText());
+    }
+
+    private void searchFilter(String searchItem) {
+        DefaultListModel filteredItems = new DefaultListModel();
+        Iterator i = oxford.database.iterator();
+        while (i.hasNext()) {
+            String item = i.next().toString();
+            int n = searchItem.length();
+            for (int j = 0; j < n; j++) {
+                if (j + 1 > item.length() || Character.compare(searchItem.charAt(j), item.charAt(j))!=0)
+                    break;
+                if (j == n - 1)
+                    filteredItems.addElement(item);
+            }
+
+        }
+
+        jListModel = filteredItems;
+        jList.setModel(jListModel);
+
+    }
+
+    private class loadSound extends AbstractAction {
+        public void actionPerformed(ActionEvent event) {
+            if (currentWord != null) {
+                try {
+                    SoundClip.playSound(currentWord + ".wav");
+                }
+                catch(Exception e) {
+                    loadError("Cannot find the wav file!");
+                }
+            }
         }
     }
 
-    private void showError(String s) {
+    private void loadFile(String src) {
+        try {
+            textPane.setPage("File:///" + cd + "/database/file/" + src + ".html");
+        } catch (Exception ex) {
+            loadError("Data not found!");
+        }
+    }
+
+    private void loadError(String s) {
         JOptionPane.showMessageDialog(
                 panel,
                 "ATTENTION: "
-                        + "s.",
+                        + s,
                 "ERROR",
                 JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void goToSettings() {
+        Settings frame = new Settings();
+        frame.setVisible(true);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
     private static String translate(String langFrom, String langTo, String text) throws IOException {

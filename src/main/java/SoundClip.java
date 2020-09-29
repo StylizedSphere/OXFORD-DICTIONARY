@@ -39,7 +39,7 @@ public class SoundClip{
         clip.open(audioInputStream);
     }
 
-    public static void playSound(String src) {
+    public static void playSound(String src) throws IOException{
         String cd = System.getProperty("user.dir") + "/src/main/resources/sound/";
         src = cd + src;
         filePath = src;
