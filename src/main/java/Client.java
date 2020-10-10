@@ -1,6 +1,31 @@
-import javax.swing.*;
-import java.awt.*;
+package Dictionary;
+
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.border.BevelBorder;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,8 +36,6 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
-import javax.swing.border.BevelBorder;
-import java.awt.event.*;
 
 
 public class Client extends UI {
@@ -20,7 +43,7 @@ public class Client extends UI {
     private JTextPane textPane;
     private JTextField textField;
     private JScrollPane scrollPane;
-    private JScrollPane jListScrollPane;
+    private javax.swing.JScrollPane jListScrollPane;
     private javax.swing.JList<String> jList;
 
     private String currentWord;
@@ -37,6 +60,7 @@ public class Client extends UI {
     public final void initUI() {
         setTitle("OXFORD");
         setSize(800,600);
+        setResizable(false);
 
         JPanel basic = new JPanel();
         basic.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
@@ -56,7 +80,7 @@ public class Client extends UI {
         viewMenu.add(showStatusBar);
         menubar.add(viewMenu);
         setJMenuBar(menubar);
-//
+        //
         JPanel top = new JPanel();
         top.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         top.setLayout(new BoxLayout(top, BoxLayout.LINE_AXIS));
@@ -64,6 +88,8 @@ public class Client extends UI {
         textField = new JTextField();
         textField.setFont(new java.awt.Font("Tahoma", 0, 20));
         textField.setPreferredSize(new Dimension(getWidth()/4, getHeight()/9));
+        textField.setMaximumSize(new Dimension(getWidth()/3, getHeight()/4));
+        textField.setMinimumSize(new Dimension(getWidth()/3, getHeight()/4));
         textField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 searchKeyReleased(evt);
@@ -105,7 +131,7 @@ public class Client extends UI {
         topRight.add(playSound);
         top.add(textField);
         top.add(topRight);
-//
+        //
         JPanel bottom = new JPanel();
         bottom.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         bottom.setLayout(new BoxLayout(bottom, BoxLayout.LINE_AXIS));
@@ -115,6 +141,11 @@ public class Client extends UI {
         jListScrollPane.setPreferredSize(new Dimension(getWidth()/4, getHeight() *6/7));
         jList.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jListMouseClicked(evt);
+            }
+        });
         jListScrollPane.setViewportView(jList);
         textPane = new JTextPane();
         textPane.setContentType("text/html");
@@ -123,7 +154,7 @@ public class Client extends UI {
         scrollPane.setPreferredSize(new Dimension(getWidth()*3/4, getHeight()*8/9));
         bottom.add(jListScrollPane);
         bottom.add(scrollPane);
-//
+        //
         basic.add(top);
         basic.add(bottom);
         add(basic);
@@ -177,6 +208,11 @@ public class Client extends UI {
         jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
+    private void jListMouseClicked(java.awt.event.MouseEvent evt) {
+        String wordTarget = jList.getSelectedValue();
+        loadFile(wordTarget.toLowerCase()); 
+    }
+
     private void searchKeyReleased(java.awt.event.KeyEvent evt) {
         searchFilter(textField.getText());
     }
@@ -193,6 +229,7 @@ public class Client extends UI {
                 if (j == n - 1)
                     filteredItems.addElement(item);
             }
+
         }
 
         jListModel = filteredItems;

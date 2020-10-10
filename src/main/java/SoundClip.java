@@ -1,3 +1,5 @@
+package Dictionary;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -50,8 +52,7 @@ public class SoundClip{
             clip.close();
             audioInputStream.close();
         } catch (Exception ex) {
-            System.out.println("Error with playing sound.");
-            ex.printStackTrace();
+            System.out.println("File not found.");
         }
     }
 
