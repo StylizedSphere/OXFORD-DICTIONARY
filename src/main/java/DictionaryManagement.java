@@ -1,3 +1,5 @@
+package Dictionary;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,7 +27,8 @@ public class DictionaryManagement extends Dictionary {
     }
 
     public void createAllHTML() {
-        pullData();
+        //pullDataFromServer();
+        pullDataFromTxt();
         try {
             for (int i = 0; i < n; i++) {
                 boolean flag = false;
@@ -52,7 +55,7 @@ public class DictionaryManagement extends Dictionary {
 
                 htmlStringBuilder.append("<h1>");
                 htmlStringBuilder.append(name[i]);
-                htmlStringBuilder.append("<h1>\n");
+                htmlStringBuilder.append("</h1>\n");
 
                 String []parts = description[i].split("\n");
                 for (int j = 0; j < parts.length; j++) {
