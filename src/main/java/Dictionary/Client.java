@@ -197,7 +197,7 @@ public class Client extends UI {
         public void actionPerformed(ActionEvent event) {
             String wordTarget = textField.getText();
                 try {
-                    Files.deleteIfExists(Paths.get(cd + "database/" + wordTarget + "html"));
+                    Files.deleteIfExists(Paths.get(cd + "database/file/" + wordTarget + ".html"));
                     System.out.println("File deleted successfully");
                 } catch(Exception e) {
                     e.printStackTrace();
