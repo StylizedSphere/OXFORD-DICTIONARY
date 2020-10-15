@@ -103,7 +103,7 @@ public class Settings extends UI {
             String wordTarget = topTextPane.getText();
 
             try {
-                File obj = new File( cd + "/database/file/" + wordTarget + ".html");
+                File obj = new File( cd + "database/file/" + wordTarget + ".html");
                 if (obj.createNewFile()) {
                     System.out.println("File created: " + obj.getName());
                 } else {
@@ -115,7 +115,7 @@ public class Settings extends UI {
             }
 
             try {
-                FileWriter myWriter = new FileWriter( cd + "/database/file/" + wordTarget + ".html");
+                FileWriter myWriter = new FileWriter( cd + "database/file/" + wordTarget + ".html");
                 myWriter.write(topTextPane.getText() + "\n");
                 myWriter.write(botTextPane.getText());
                 myWriter.close();
