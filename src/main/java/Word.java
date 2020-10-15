@@ -12,7 +12,7 @@ public class Word {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
                     .getConnection("jdbc:postgresql://localhost:5432/translate",
-                                   "postgres", "645hoanghoatham");
+                            "postgres", "645hoanghoatham");
 
             String query = "INSERT INTO DICTIONARY(NAME,DESCRIPTION) VALUES (?, ?)";
             PreparedStatement ps = c.prepareStatement(query);
@@ -32,30 +32,4 @@ public class Word {
     // push data into server
     // get all names to database.txt
 
-    public static void main(String[] args) {
-        File file = new File("E:\\PERSONAL\\JAVA OOP\\src\\main\\resources\\database\\database.txt");
-        String item;
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String name = "";
-            String des = "";
-            boolean flag = false;
-            while ((item = br.readLine()) != null) {
-                if (item.equals(""))
-                    continue;
-
-                if (Character.compare(item.charAt(0), '@') == 0) {
-                    if (flag) pushData(name, des);
-                    name = "";
-                    des = "";
-                    name += item;
-                    flag = true;
-                }
-                else
-                    des += (item + "\n");
-            }
-        }catch(Exception exception) {
-            System.err.println("Cannot open database.txt");
-        }
-    }
 }
