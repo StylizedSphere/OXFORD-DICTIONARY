@@ -91,7 +91,9 @@ public class DictionaryManagement extends Dictionary {
     }
 
     public static void WriteToFile(String fileContent, String fileName) throws IOException {
-        String projectPath = System.getProperty("user.dir")+ "/database/file/";
+        String projectPath = System.getProperty("user.dir") + "/src/main/resources/database/file/";
+        File newFolder = new File(projectPath);
+        newFolder.mkdir();
         String tempFile = projectPath + fileName;
         File file = new File(tempFile);
         if (file.exists()) {
@@ -114,6 +116,5 @@ public class DictionaryManagement extends Dictionary {
     public static void main(String[] args) {
         DictionaryManagement oxford = new DictionaryManagement();
         oxford.createAllHTML();
-        ;
     }
 }

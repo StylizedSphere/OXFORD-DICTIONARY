@@ -29,9 +29,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;  
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -198,11 +196,35 @@ public class Client extends UI {
             String wordTarget = textField.getText();
                 try {
                     Files.deleteIfExists(Paths.get(cd + "database/file/" + wordTarget + ".html"));
+                    File database = new File(cd + "database/database.txt");
+                    BufferedReader br = new BufferedReader(new FileReader(database));
+                    removeLine(br, database, wordTarget);
+                    searchFilter("");
+                    textPane.setText("");
+                    oxford = new DictionaryManagement();
                     System.out.println("File deleted successfully");
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
         }
+    }
+
+    public static void removeLine(BufferedReader br , File f,  String Line) throws IOException{
+        File temp = new File("temp.txt");
+        BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
+        String removeID = Line;
+        String currentLine;
+        while((currentLine = br.readLine()) != null){
+            String trimmedLine = currentLine.trim();
+            if(trimmedLine.equals(removeID)){
+                currentLine = "";
+            }
+            bw.write(currentLine + System.getProperty("line.separator"));
+        }
+        bw.close();
+        br.close();
+        boolean delete = f.delete();
+        boolean b = temp.renameTo(f);
     }
 
     private void jListBindData(){
@@ -216,6 +238,7 @@ public class Client extends UI {
 
     private void jListMouseClicked(java.awt.event.MouseEvent evt) {
         String wordTarget = jList.getSelectedValue();
+        currentWord = wordTarget;
         loadFile(wordTarget.toLowerCase()); 
     }
 
